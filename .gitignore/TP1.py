@@ -52,23 +52,24 @@ def regress(X,Y):
     return np.dot(np.linalg.pinv(np.dot(Xp.T,Xp)),np.dot(Xp.T,Y))
 
 def question221(nb_points,pas,t_initial,bruit,bruit_initial):
+    
     table_donnees0=np.zeros(nb_points)
     table_donnees1=np.zeros(nb_points)    
     table_bruit0=np.zeros(nb_points)
     table_bruit1=np.zeros(nb_points)
-
+    
     for i in range(nb_points):
         res=gen_linear(nbex=pas*i+t_initial)
         w=regress(res[0],res[1])
-        table_donnees0[i]=np.mean(mse(predict(w,res[0]),res[1]))
-        table_donnees1[i]=mse(w[1:],np.array([1,1,1]))
-
+        table_donnees0[i]=mse(predict(w,res[0]),res[1])
+        table_donnees1[i]=mse(w.T,np.array([5,1,1,1]))
+        
     for j in range(nb_points):
         res=gen_linear(nbex=200,eps=bruit_initial+j*bruit/nb_points)
         w=regress(res[0],res[1])
-        table_bruit0[j]=np.mean(mse(predict(w,res[0]),res[1]))
-        table_bruit1[j]=mse(w[1:],np.array([1,1,1]))
-
+        table_bruit0[j]=mse(predict(w,res[0]),res[1])
+        table_bruit1[j]=mse(w.T,np.array([5,1,1,1]))
+        
     plt.figure()
     plt.subplot (2 ,2 ,1)
     plt.scatter(np.array([(t_initial+i*pas) for i in range (nb_points)]),table_donnees0)
@@ -78,5 +79,3 @@ def question221(nb_points,pas,t_initial,bruit,bruit_initial):
     plt.scatter(np.array([(t_initial+i*pas) for i in range (nb_points)]),table_donnees1)
     plt.subplot (2 ,2 ,4)
     plt.scatter(np.array([(bruit_initial+j*bruit/nb_points) for j in range (nb_points)]),table_bruit1)
-
-
